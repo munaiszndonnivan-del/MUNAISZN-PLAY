@@ -1169,16 +1169,17 @@ function loadFrameX(item) {
     ? `${base}/${state.playerSeason}/${state.playerEpisode}`
     : `${base}?autoplay=1&muted=0`;
 
-  $("playerFrameWrap").innerHTML = `
+ $("playerFrameWrap").innerHTML = `
     <iframe
       src="${url}"
       title="External video player"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
       allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
       allowfullscreen
       webkitallowfullscreen
       mozallowfullscreen
       referrerpolicy="strict-origin-when-cross-origin">
-    </iframe>`;
+    </iframe>`; 
 
   toast("External player loaded. Availability is not guaranteed.");
 }
