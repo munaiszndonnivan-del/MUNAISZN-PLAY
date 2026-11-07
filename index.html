@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#060908">
+<meta name="description" content="MUNAISZN PLAY — Discover your next obsession. A premium cinematic universe.">
+<title>MUNAISZN PLAY — Your Cinematic Universe</title>
+<link rel="preconnect" href="https://image.tmdb.org">
+<link rel="preconnect" href="https://api.themoviedb.org">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient"></div>
+
+<header class="topbar">
+  <a class="brand" href="#" aria-label="MUNAISZN PLAY home">
+    <span class="brand-mark">M</span>
+    <span>MUNAISZN <b>PLAY</b></span>
+  </a>
+
+  <nav class="desktop-nav" aria-label="Main navigation">
+    <button class="nav-link active" data-view="home">Discover</button>
+    <button class="nav-link" data-view="movies">Movies</button>
+    <button class="nav-link" data-view="tv">Series</button>
+    <button class="nav-link" data-view="watchlist">My List</button>
+  </nav>
+
+  <div class="header-actions">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input id="searchInput" type="search" placeholder="Titles, genres, people..." autocomplete="off">
+      <button id="searchClear" aria-label="Clear search">×</button>
+      <div id="searchSuggestions" class="search-suggestions hidden"></div>
+    </div>
+    <button class="profile" id="settingsOpen" aria-label="Settings">MP</button>
+  </div>
+</header>
+
+<main>
+
+  <section id="hero" class="hero spotlight">
+    <div class="hero-art" id="heroArt"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="spotlight-content">
+      <div class="spotlight-label">
+        <span class="live-dot"></span>
+        <span id="spotlightCategory">TRENDING NOW</span>
+      </div>
+
+      <h1 id="heroTitle">Discover what's trending.</h1>
+      <p id="heroDescription">The stories everyone is talking about.</p>
+
+      <div class="hero-actions">
+        <button class="primary-btn" id="heroInfo">Explore title →</button>
+        <button class="ghost-btn" id="surpriseBtn">✦ Surprise me</button>
+      </div>
+    </div>
+
+    <div class="spotlight-controls">
+      <button id="spotlightPrev" aria-label="Previous title">‹</button>
+      <div id="spotlightDots" class="spotlight-dots"></div>
+      <button id="spotlightNext" aria-label="Next title">›</button>
+    </div>
+  </section>
+
+  <section id="continueSection" class="section-wrap shelf-section hidden">
+    <div class="shelf-heading">
+      <div><p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p><h2>Continue watching</h2></div>
+    </div>
+    <div id="continueGrid" class="horizontal-grid"></div>
+  </section>
+
+  <div id="homeShelves" class="home-shelves section-wrap"></div>
+
+  <section class="section-wrap discover-section">
+    <div class="toolbar">
+      <div>
+        <p class="eyebrow">HANDPICKED FOR YOUR NEXT WATCH</p>
+        <h2 id="sectionTitle">Trending now</h2>
+      </div>
+      <div class="toolbar-right">
+        <select id="sortSelect" aria-label="Sort titles">
+          <option value="popular">Popular</option>
+          <option value="rating">Top rated</option>
+          <option value="recent">Newest</option>
+        </select>
+      </div>
+    </div>
+    <div id="genreBar" class="genre-bar"></div>
+    <section id="contentGrid" class="content-grid" aria-live="polite">
+      <div class="loading"><span class="spinner"></span><p>Preparing your cinema...</p></div>
+    </section>
+  </section>
+
+  <section class="section-wrap extra-shelf">
+    <div class="shelf-heading">
+      <div><p class="eyebrow">EXPLORE SOMETHING DIFFERENT</p><h2>Discover more worlds</h2></div>
+    </div>
+    <div class="collection-grid">
+      <button class="collection-card collection-movies" data-collection="movies">
+        <span>01 / THE BIG SCREEN</span><strong>Movie nights.</strong><small>Stories made for the big screen ↗</small>
+      </button>
+      <button class="collection-card collection-series" data-collection="tv">
+        <span>02 / ONE MORE EPISODE</span><strong>Series to get lost in.</strong><small>Your next long-running obsession ↗</small>
+      </button>
+      <button class="collection-card collection-trending" data-collection="trending">
+        <span>03 / EVERYONE IS WATCHING</span><strong>What's trending.</strong><small>Discover what's capturing attention ↗</small>
+      </button>
+    </div>
+  </section>
+
+  <section class="section-wrap info-strip">
+    <div><span class="info-icon">✦</span><div><b>Your universe, your choices</b><p>Build your own watchlist and discover stories worth remembering.</p></div></div>
+    <div><span class="info-icon">◈</span><div><b>A cinema without distractions</b><p>A clean, advertisement-free discovery experience.</p></div></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="brand small" href="#"><span class="brand-mark">M</span><span>MUNAISZN <b>PLAY</b></span></a>
+  <p>Discover stories. Find your next obsession.</p>
+  <p class="footer-small">Movie and television information powered by TMDB. MUNAISZN PLAY is not endorsed or certified by TMDB.</p>
+</footer>
+
+<!-- MOVIE / SERIES DETAILS -->
+<div class="modal-backdrop hidden" id="detailModal">
+  <article class="detail-modal">
+    <div id="detailBackdrop" class="detail-backdrop"></div>
+    <div class="detail-gradient"></div>
+    <button class="modal-close" data-close="detailModal" aria-label="Close">×</button>
+
+    <div class="detail-main">
+      <div class="detail-poster-wrap">
+        <img id="detailPoster" src="" alt="Title poster">
+      </div>
+      <div class="detail-body">
+        <p class="eyebrow" id="detailType">FEATURE FILM</p>
+        <h2 id="detailTitle">Title</h2>
+        <div class="detail-meta" id="detailMeta"></div>
+        <div class="detail-tags" id="detailTags"></div>
+        <p id="detailOverview" class="detail-overview"></p>
+        <div class="detail-actions">
+          <button id="playButton" class="primary-btn">▶ Play</button>
+          <button id="detailTrailerButton" class="ghost-btn">▷ Watch trailer</button>
+          <button id="saveButton" class="ghost-btn">＋ My List</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="seasonSection" class="detail-section hidden">
+      <div class="shelf-heading"><div><p class="eyebrow">EXPLORE THE STORY</p><h3>Episodes</h3></div>
+        <select id="seasonSelect" aria-label="Select season"></select>
+      </div>
+      <div id="episodeGrid" class="episode-grid"></div>
+    </section>
+
+    <section class="detail-section">
+      <p class="eyebrow">THE PEOPLE BEHIND THE STORY</p>
+      <h3>Cast</h3>
+      <div id="castGrid" class="cast-grid"></div>
+    </section>
+
+    <section class="detail-section">
+      <p class="eyebrow">KEEP EXPLORING</p>
+      <h3>You might also like</h3>
+      <div id="similarGrid" class="similar-grid"></div>
+    </section>
+    <p class="source-note">Playback is provided by external services. Only use sources you own or are authorized to access.</p>
+  </article>
+</div>
+
+<!-- FULL WATCH PAGE -->
+<div class="modal-backdrop watch-page hidden" id="playerModal">
+  <header class="watch-header">
+    <button class="watch-back" data-close="playerModal" aria-label="Back to browsing">
+      <span>←</span> <span>BACK</span>
+    </button>
+    <a class="watch-brand" href="#" aria-label="MUNAISZN PLAY home">
+      <span class="brand-mark">M</span>
+      <span>MUNAISZN <b>PLAY</b></span>
+    </a>
+    <span class="watch-header-label">YOUR CINEMA</span>
+  </header>
+
+  <main class="watch-content">
+    <div class="watch-breadcrumb">
+      <span>NOW WATCHING</span>
+      <span class="watch-breadcrumb-divider">/</span>
+      <span id="watchType">FEATURE PRESENTATION</span>
+      <span class="watch-breadcrumb-divider">/</span>
+      <strong id="playerTitle">Now playing</strong>
+    </div>
+
+    <section class="watch-player-section" aria-label="Video player">
+      <div class="player-size-toolbar" aria-label="Video viewing size">
+  <span class="player-size-label">VIEWING SIZE</span>
+  <div class="player-size-options">
+    <button type="button" class="player-size-btn" data-player-size="normal" aria-pressed="true">Standard</button>
+    <button type="button" class="player-size-btn active" data-player-size="cinema" aria-pressed="false">Cinema</button>
+    <button type="button" class="player-size-btn" data-player-size="fullscreen" aria-pressed="false">Full Screen</button>
+  </div>
+</div>
+<div class="watch-player-frame">
+        <div class="watch-player-topline">
+          <span class="watch-live-label"><i></i> PLAYBACK</span>
+          <span class="watch-provider-label">EXTERNAL SOURCE</span>
+        </div>
+        <div class="player-frame-wrap" id="playerFrameWrap">
+          <div class="player-empty">
+            <div class="play-symbol">▶</div>
+            <h3>Ready when you are.</h3>
+            <p>Choose an available authorized playback source or watch the official trailer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="watch-information">
+      <div class="watch-main-info">
+        <p class="eyebrow">THE STORY CONTINUES</p>
+        <h1 id="watchTitle">Now playing</h1>
+        <div class="watch-facts" id="watchFacts"></div>
+        <p class="watch-overview" id="watchOverview">
+          Choose a title to explore its story.
+        </p>
+        <div class="player-options">
+          <button class="primary-btn" id="framexButton">Load external player</button>
+          <button class="ghost-btn" id="trailerButton">Watch official trailer</button>
+        </div>
+      </div>
+      <aside class="watch-side-info">
+        <span class="eyebrow">YOUR EXPERIENCE</span>
+        <p>Playback availability depends on the external provider. MUNAISZN PLAY does not host video files.</p>
+      </aside>
+    </section>
+
+    <section id="playerEpisodePicker" class="player-episode-picker watch-episode-section hidden">
+      <div class="watch-section-heading">
+        <div>
+          <p class="eyebrow">CONTINUE THE JOURNEY</p>
+          <h2>Season & episodes</h2>
+        </div>
+        <span id="playerEpisodeStatus">Select an episode</span>
+      </div>
+      <div class="player-picker-controls">
+        <label>
+          <span>SEASON</span>
+          <select id="playerSeasonSelect" aria-label="Choose season"></select>
+        </label>
+        <label>
+          <span>EPISODE</span>
+          <select id="playerEpisodeSelect" aria-label="Choose episode"></select>
+        </label>
+      </div>
+      <p id="playerEpisodeDescription" class="player-episode-description"></p>
+    </section>
+
+    <div class="watch-footer">
+      <span>MUNAISZN PLAY</span>
+      <span>MADE FOR THE LOVE OF STORIES</span>
+    </div>
+  </main>
+</div>
+
+<!-- SETTINGS -->
+<div class="modal-backdrop hidden" id="settingsModal">
+  <article class="settings-modal">
+    <button class="modal-close" data-close="settingsModal">×</button>
+    <p class="eyebrow">YOUR PERSONAL CINEMA</p>
+    <h2>Settings</h2>
+    <label class="field-label" for="apiKey">TMDB API key</label>
+    <input id="apiKey" class="settings-input" type="password" placeholder="Paste your TMDB API key">
+    <p class="help-text">Connect your free TMDB API key to browse live movies and series. Your key is saved in this browser. <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">TMDB API settings ↗</a></p>
+    <button class="primary-btn full" id="saveSettings">Connect my cinema</button>
+    <button class="text-btn" id="clearSettings">Clear saved API key</button>
+    <div class="settings-divider"></div>
+    <p class="help-text">Your watchlist and viewing progress are stored on this device. Clearing browser site data may remove them.</p>
+    <p class="settings-foot">MUNAISZN PLAY · AD-FREE EXPERIENCE</p>
+  </article>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav class="mobile-nav" aria-label="Mobile navigation">
+  <button class="mobile-nav-link active" data-view="home"><span>⌂</span>Home</button>
+  <button class="mobile-nav-link" data-view="movies"><span>▣</span>Movies</button>
+  <button class="mobile-nav-link" data-view="tv"><span>▤</span>Series</button>
+  <button class="mobile-nav-link" data-view="watchlist"><span>♡</span>My List</button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
