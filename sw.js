@@ -1,5 +1,6 @@
+// MUNAISZN PLAY — Production PWA Service Worker
 
-const CACHE_NAME = "munaiszn-play-v1";
+const CACHE_NAME = "munaiszn-play-v2";
 const BASE_PATH = "/MUNAISZN-PLAY/";
 
 const APP_SHELL = [
@@ -9,35 +10,40 @@ const APP_SHELL = [
   BASE_PATH + "style.css",
   BASE_PATH + "app.js",
   BASE_PATH + "manifest.webmanifest",
-  BASE_PATH + "404.html"
+  BASE_PATH + "404.html",
+  BASE_PATH + "icons/icon-192.png",
+  BASE_PATH + "icons/icon-512.png"
 ];
 
+// Install and cache the application shell
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async cache => {
-      for (const url of APP_SHELL) {
-        try {
-          await cache.add(url);
-        } catch (error) {
-          console.warn("Could not cache:", url);
-        }
-      }
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
   );
 });
 
+// Activate and remove outdated application caches
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key.startsWith("munaiszn-play-") && key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+    caches.keys()
+      .then(keys =>
+        Promise.all(
+          keys
+            .filter(key =>
+              key.startsWith("munaiszn-play-") &&
+              key !== CACHE_NAME
+            )
+            .map(key => caches.delete(key))
+        )
       )
-    ).then(() => self.clients.claim())
+      .then(() => self.clients.claim())
   );
 });
 
+// Network-first strategy for navigation
+// Cache-first strategy for static application assets
 self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
@@ -52,25 +58,46 @@ self.addEventListener("fetch", event => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(async () => {
-        const cached = await caches.match(request);
-        return cached || await caches.match(BASE_PATH + "offline.html");
-      })
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, copy));
+          }
+
+          return response;
+        })
+        .catch(async () => {
+          return (
+            await caches.match(request) ||
+            await caches.match(BASE_PATH + "offline.html")
+          );
+        })
     );
+
     return;
   }
 
   event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
+    caches.match(request)
+      .then(cached => {
+        if (cached) return cached;
 
-      return fetch(request).then(response => {
-        if (response.ok && response.type === "basic") {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-        }
-        return response;
-      });
-    })
+        return fetch(request).then(response => {
+          if (
+            response.ok &&
+            response.type === "basic"
+          ) {
+            const copy = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, copy));
+          }
+
+          return response;
+        });
+      })
   );
 });
