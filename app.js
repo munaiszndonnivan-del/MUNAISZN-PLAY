@@ -1473,7 +1473,14 @@ document.addEventListener("keydown", event => {
 
   setPlayerSize("cinema");
 })();
-
+// MUNAISZN PLAY — PWA service worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(error => {
+      console.warn("Service worker registration failed:", error);
+    });
+  });
+}
 // Start the experience
 renderRecent();
 updateNavigation();
