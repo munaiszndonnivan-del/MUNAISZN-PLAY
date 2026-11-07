@@ -76,19 +76,9 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onHideCustomView() {
-                if (fullscreenView == null) return;
-
-                rootLayout.removeView(fullscreenView);
-                fullscreenView = null;
-
-                webView.setVisibility(View.VISIBLE);
-
-                if (fullscreenCallback != null) {
-                    fullscreenCallback.onCustomViewHidden();
-                    fullscreenCallback = null;
-                }
-            }
+public void onHideCustomView() {
+    exitFullscreen();
+}
         });
 
         rootLayout.addView(
@@ -105,14 +95,28 @@ public class MainActivity extends Activity {
         webView.requestFocus();
     }
 
-    @Override
+      @Override
     public void onBackPressed() {
         if (fullscreenView != null) {
-            webView.getWebChromeClient().onHideCustomView();
+            exitFullscreen();
         } else if (webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void exitFullscreen() {
+        if (fullscreenView == null) return;
+
+        rootLayout.removeView(fullscreenView);
+        fullscreenView = null;
+
+        webView.setVisibility(View.VISIBLE);
+
+        if (fullscreenCallback != null) {
+            fullscreenCallback.onCustomViewHidden();
+            fullscreenCallback = null;
         }
     }
 
@@ -125,4 +129,4 @@ public class MainActivity extends Activity {
 
         super.onDestroy();
     }
-}
+}  
